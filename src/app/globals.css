@@ -7,7 +7,7 @@
   --foreground: #171717;
   --font-righteous: "Righteous", cursive;
   --font-inter: "Inter", sans-serif;
-
+  --kinda-dark: #1b1b1b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,4 +25,8 @@ body {
 
 .righteous {
   font-family: var(--font-righteous);
+}
+
+.kindaDark {
+  background: var(--kinda-dark)
 }
