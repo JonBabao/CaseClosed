@@ -50,24 +50,26 @@ const Login: React.FC = () => {
                         required
                         className="w-full rounded-lg p-2"
                     />
-                    <BlackButton onClick={handleSubmit}>Log In</BlackButton>
-                </form>
-                <Link href="/auth/register">
                     <button
-                        type="button"
-                        className="text-sm mt-2 text-blue-600 hover:text-blue-800 w-[70vw] lg:w-full"
-                        >
-                        Don't have an account yet?
-                    </button>
-                </Link>
-                <button
                     type="button"
                     onClick={handleForgotPassword}
-                    className="text-sm mt-2 text-blue-600 hover:text-blue-800 w-[70vw] lg:w-full"
+                    className="text-sm text-left text-blue-600 hover:text-blue-800 w-[70vw] lg:w-full"
                     >
                     Forgot Password?
                 </button>
-                
+                    <BlackButton onClick={handleSubmit}>Log In</BlackButton>
+                </form>
+                <div className="flex flex-row text-sm mt-2 w-[70vw] lg:w-full text-center justify-center">
+                    <p>Not a member?&nbsp;</p>
+                    <Link href="/auth/register">
+                        <button
+                            type="button"
+                            className="text-blue-600 hover:text-blue-800 "
+                            >
+                            Register now
+                        </button>
+                    </Link>
+                </div>
             </div> 
         </div>
 
