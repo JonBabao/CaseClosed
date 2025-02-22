@@ -8,6 +8,7 @@
   --font-righteous: "Righteous", cursive;
   --font-inter: "Inter", sans-serif;
   --kinda-dark: #1b1b1b;
+  --light-dark: #292929;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,4 +30,8 @@ body {
 
 .kindaDark {
   background: var(--kinda-dark)
+}
+
+.lightDark {
+  background: var(--light-dark)
 }
