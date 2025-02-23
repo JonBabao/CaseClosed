@@ -9,11 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.6.13",
+    "@lexical/code": "^0.25.0",
+    "@lexical/list": "^0.25.0",
+    "@lexical/react": "^0.25.0",
     "framer-motion": "^12.4.5",
+    "lexical": "^0.25.0",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "use-debounce": "^10.0.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

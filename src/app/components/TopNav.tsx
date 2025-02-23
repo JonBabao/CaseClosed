@@ -3,6 +3,9 @@
 import React, { useState } from "react";
 import Logo from "/public/logo_clean.png"
 import { GiHamburgerMenu } from "react-icons/gi";
+import { FiPlus } from "react-icons/fi";
+
+
 
 const TopNav: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false); 
@@ -28,9 +31,13 @@ const TopNav: React.FC = () => {
                     <button className="p-7 hover:bg-[#292929] transition-colors">Help</button>
                 </div>
                 <div className="flex gap-10 mr-10 font-semibold text-base">
+                    <button className="flex justify-center items-center gap-2 hover:underline">
+                        <FiPlus size={20} />
+                        Create
+                    </button>
                     <button className="p-2 px-3 rounded-lg border-2 border-gray-200 hover:bg-[#1c1c1c]">Log In</button>
                     <button className="p-2 px-3 rounded-lg bg-gray-200 text-[#292929] hover:bg-gray-100">Register</button>
-
+                    
                 </div>
 
             </nav>
