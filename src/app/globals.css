@@ -35,3 +35,29 @@ body {
 .lightDark {
   background: var(--light-dark)
 }
+
+/* Change the color of toolbar buttons */
+.ql-toolbar button {
+  color: #ff5722 !important; /* Change button text/icon color */
+}
+
+/* Change SVG icons inside the buttons */
+.ql-toolbar button svg {
+  stroke: #ff5722 !important; /* Change icon color */
+  fill: #ff5722 !important; /* Ensure color is applied */
+}
+
+/* Change color when button is hovered */
+.ql-toolbar button:hover {
+  color: #e64a19 !important;
+}
+
+/* Change active button (like bold, italic when selected) */
+.ql-toolbar button.ql-active {
+  color: white !important;
+}
+
+.ql-toolbar button.ql-active svg {
+  stroke: white !important;
+  fill: white !important;
+}
