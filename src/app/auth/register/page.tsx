@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 
 export default function RegisterPage() {
     return(
-        <MainLayout>
+        <div>
             <Register />
-        </MainLayout>
+        </div>
     );
 }

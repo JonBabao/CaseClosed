@@ -3,8 +3,8 @@ import MainLayout from '@/app/components/layouts/MainLayout';
 
 export default function LoginPage() {
     return(
-        <MainLayout>
+        <div>
             <Login />
-        </MainLayout>
+        </div>
     );
 }

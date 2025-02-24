@@ -4,15 +4,18 @@ interface ButtonProperties {
     children: React.ReactNode;
     onClick?: () => void;
     style?: React.CSSProperties;
+    type?: 'button' | 'submit' | 'reset';
+    disabled?: boolean; 
 }
 
-const BlackButton: React.FC<ButtonProperties> = ({ children, onClick, style }) => {
+const BlackButton: React.FC<ButtonProperties> = ({ children, onClick, style, type = 'button', disabled = false }) => {
     return (
         <button
-            type="button"
+            type={type}
             onClick={onClick}
-            className="kindaDark text-gray-200 font-bold rounded-lg py-4 px-6 flex items-center justify-center hover:bg-[#2d2d2d] focus:outline-none"
-            style={{...style,}}
+            disabled={disabled}
+            className="kindaDark text-gray-200 font-bold rounded-lg py-4 px-6 flex items-center justify-center hover:bg-[#2d2d2d] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            style={style}
         >
             {children}
         </button>
