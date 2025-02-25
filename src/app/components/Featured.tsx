@@ -11,16 +11,16 @@ const Featured: React.FC = () => {
 
     useEffect(() => {
         const fetchPosts = async () => {
-          const { data, error } = await supabase.from("posts").select("id, title, description");
-          if (error) {
-            console.error("Error fetching posts:", error);
-          } else {
-            setPosts(data);
-          }
+            const { data, error } = await supabase.from("posts").select("id, title, description");
+            if (error) {
+                console.error("Error fetching posts:", error);
+            } else {
+                setPosts(data);
+            }
         };
     
         fetchPosts();
-      }, []);
+    }, []);
 
     return(
         <section className="w-full flex flex-col lightDark p-8 rounded-lg items-center justify-center">

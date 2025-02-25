@@ -1,47 +1,91 @@
 "use client";
 
-import React, { useState } from "react";
-import Logo from "/public/logo_clean.png"
+import React, { useState, useEffect } from "react";
+import Logo from "/public/logo_clean.png";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiPlus } from "react-icons/fi";
-
-
+import { createClient } from "../../../lib/supabase/client";
+import { User } from "@supabase/supabase-js"; 
+import Link from "next/link";
 
 const TopNav: React.FC = () => {
+    const supabase = createClient();
     const [isOpen, setIsOpen] = useState(false); 
+    const [user, setUser] = useState<User | null>(null); 
+
+    useEffect(() => {
+        const checkUserLoggedIn = async () => {
+            const { data } = await supabase.auth.getUser();
+            setUser(data?.user || null);
+        };
+
+        checkUserLoggedIn();
+
+        const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user || null);
+        });
+
+        return () => {
+            authListener?.subscription.unsubscribe();
+        };
+    }, []);
 
     const toggleMenu = () => {
-        console.log("Hamburger clicked!");  // Debug log
         setIsOpen((prev) => !prev);
-        console.log("isOpen state:", !isOpen); // Check state after update
     };
 
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+    };
 
-    return(
+    return (
         <div>
+            {/* Desktop Navbar */}
             <nav className="hidden fixed lg:flex flex-row items-center bg-[#131313] text-gray-200 text-base w-full h-20 inset-0 z-50">
-                <img
-                    src={Logo.src}
-                    alt="Logo"
-                    className="w-16 ml-8"
-                />
+                <img src={Logo.src} alt="Logo" className="w-16 ml-8" />
                 <h1 className="righteous text-3xl ml-4">Case Closed</h1>
                 <div className="flex flex-grow items-center ml-16 font-semibold text-base gap-10">
                     <button className="p-7 hover:bg-[#292929] transition-colors">Home</button>
                     <button className="p-7 hover:bg-[#292929] transition-colors">Help</button>
                 </div>
-                <div className="flex gap-10 mr-10 font-semibold text-base">
-                    <button className="flex justify-center items-center gap-2 hover:underline">
-                        <FiPlus size={20} />
-                        Create
-                    </button>
-                    <button className="p-2 px-3 rounded-lg border-2 border-gray-200 hover:bg-[#1c1c1c]">Log In</button>
-                    <button className="p-2 px-3 rounded-lg bg-gray-200 text-[#292929] hover:bg-gray-100">Register</button>
-                    
-                </div>
 
+                <div className="flex gap-10 mr-10 font-semibold text-base">
+                    {user ? (
+                        <>  <Link href="/dashboard/createPost">
+                                <button className="flex justify-center items-center p-2 gap-2 hover:underline">
+                                    <FiPlus size={25} />
+                                    Create
+                                </button>
+                            </Link>
+                            <Link href="/auth/login">
+                                <button
+                                    className="p-2 px-3 rounded-lg border-2 border-gray-200 hover:bg-[#1c1c1c]"
+                                    onClick={handleLogout}
+                                >
+                                    Log Out
+                                </button>
+                            </Link>
+                            
+                        </>
+                    ) : (
+                        <>  
+                            <Link href="/auth/login">   
+                                <button className="p-2 px-3 rounded-lg border-2 border-gray-200 hover:bg-[#1c1c1c]">
+                                    Log In
+                                </button>
+                            </Link>
+                            <Link href="/auth/register">
+                                <button className="p-2 px-3 rounded-lg bg-gray-200 text-[#292929] hover:bg-gray-100">
+                                    Register
+                                </button>
+                            </Link>
+                        </>
+                    )}
+                </div>
             </nav>
 
+            {/* Mobile Navbar */}
             <nav className="fixed flex flex-row h-20 w-full text-gray-200 lg:hidden items-center justify-center bg-[#131313] inset-0 z-50">
                 <button onClick={toggleMenu} className="ml-6 z-50">
                     <GiHamburgerMenu size={32} />
@@ -54,14 +98,23 @@ const TopNav: React.FC = () => {
                         <a href="#" className="p-3 hover:bg-[#2d2d2d]">Home</a>
                         <a href="#" className="p-3 hover:bg-[#2d2d2d]">Leaderboards</a>
                         <a href="#" className="p-3 hover:bg-[#2d2d2d]">Help</a>
-                        <a href="#" className="p-3 hover:bg-[#2d2d2d]">Logout</a>
+                        {user ? (
+                            <button
+                                onClick={handleLogout}
+                                className="p-3 text-left hover:bg-[#2d2d2d] w-full"
+                            >
+                                Logout
+                            </button>
+                        ) : (
+                            <>
+                                <a href="/auth/login" className="p-3 hover:bg-[#2d2d2d]">Log In</a>
+                                <a href="/auth/register" className="p-3 hover:bg-[#2d2d2d]">Register</a>    
+                            </>
+                        )}
                     </div>
                 )}
             </nav>
         </div>
-
-
-
     );
 };
 
