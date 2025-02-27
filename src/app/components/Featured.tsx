@@ -3,15 +3,25 @@
 import React, { useEffect, useState } from "react";
 import Logo from "/public/logo.png"
 import { createClient } from "../../../lib/supabase/client";
+import { date } from "zod";
+import { timeAgo } from "../utils/timeAgo";
 
 const Featured: React.FC = () => {
 
-    const [posts, setPosts] = useState<{ id: number, title: string, description: string }[]>([]);
+    const [posts, setPosts] = useState<{ 
+        id: number, 
+        title: string, 
+        description: string, 
+        createdBy: string,      
+        likes: BigInteger,
+        views: BigInteger, 
+        datePosted: string,
+     }[]>([]);
     const supabase = createClient();
 
     useEffect(() => {
         const fetchPosts = async () => {
-            const { data, error } = await supabase.from("posts").select("id, title, description");
+            const { data, error } = await supabase.from("posts").select("id, title, description, createdBy, likes, views, datePosted");
             if (error) {
                 console.error("Error fetching posts:", error);
             } else {
@@ -37,11 +47,11 @@ const Featured: React.FC = () => {
                             <div className="flex flex-grow flex-col pl-8 justify-center">
                                 <p className="font-bold text-base">{post.title}</p>
                                 <p>{post.description}</p>
-                                <p className="block md:hidden"><b>Likes:</b> 1m <b>Views:</b> 1.2m</p>
+                                <p className="block md:hidden mt-4"><b>Likes:</b> {post.likes} <b>Views:</b> {post.views}</p>
                             </div>
                             <div className="hidden md:flex flex-col text-right justify-center">
-                                <p>Likes: 1m</p>
-                                <p>Views: 1.2m</p>
+                                <p>Likes: {post.likes}</p>
+                                <p>Views: {post.views}</p>
                             </div>
                             <div className="hidden md:flex border-l-2 ml-4 p-4 items-center">
                                 <img
@@ -49,10 +59,9 @@ const Featured: React.FC = () => {
                                     alt="Logo"
                                     className="w-8"
                                 />
-                                <div className="flex flex-col ml-4 justify-center">
-                                    <p>Username</p>
-                                    <p>Created on: 02/22/2022</p>
-
+                                <div className="flex flex-col w-36 ml-4 justify-center">
+                                    <p>{post.createdBy}</p>
+                                    <p>Created: {timeAgo(post.datePosted)}</p>
                                 </div>
 
                             </div>

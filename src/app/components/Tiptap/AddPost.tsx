@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -14,11 +15,49 @@ import { Input } from "./ui/input";
 import { toast } from "./ui/use-toast";
 import RichTextEditor from "./RichTextEditor";
 import LoadingBtn from "./LoadingBtn";
+import { useRouter } from "next/navigation";
 import { postSchema, PostValues } from "../../../../lib/validations";
-import { createClient } from "../../../../lib/supabase/client"; // Import Supabase client
+import { createClient } from "../../../../lib/supabase/client"; 
 
 export default function AddText() {
-  const supabase = createClient(); // Initialize Supabase client
+  const supabase = createClient();
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+
+      if(userError || !userData?.user){
+        router.push("/auth/login");
+        return;
+      }
+      
+      const userId = userData.user.id;
+      console.log("Authenticated user ID:", userId);
+
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("id", userId)
+        .single();
+
+      console.log("Profile data response:", profileData, "Error:", profileError);
+
+      if (profileError) {
+        console.error("Error fetching username:", profileError);
+        return;
+      }
+
+      setUsername(profileData.username);
+      setLoading(false);
+
+    };
+
+    checkAuth();
+  }, [router]);
+
 
   const form = useForm<PostValues>({
     resolver: zodResolver(postSchema),
@@ -26,6 +65,7 @@ export default function AddText() {
       title: "",
       description: "",
       body: "",
+      createdBy: "",
     },
   });
 
@@ -36,20 +76,20 @@ export default function AddText() {
   } = form;
 
   async function onSubmit(values: PostValues) {
-    const supabase = createClient(); // Reinitialize Supabase to ensure it's not undefined
+    const supabase = createClient(); 
   
-    console.log("Submitting post:", values); // Check if values are correct
-    console.log("Supabase client:", supabase); // Check if supabase is initialized
+    console.log("Submitting post:", values); 
+    console.log("Supabase client:", supabase); 
   
     try {
       const { data, error } = await supabase
         .from("posts")
-        .insert([{ title: values.title, description: values.description, body: values.body }]);
+        .insert([{ title: values.title, description: values.description, body: values.body, createdBy: username }]);
   
       console.log("Supabase Response:", { data, error });
   
       if (error) {
-        throw error; // Ensure error is properly thrown
+        throw error; 
       }
   
       toast({
@@ -59,7 +99,7 @@ export default function AddText() {
   
       form.reset();
     } catch (error) {
-      console.error("Error adding post:", JSON.stringify(error, null, 2)); // Use JSON.stringify for better debugging
+      console.error("Error adding post:", JSON.stringify(error, null, 2)); 
       toast({
         title: "Error",
         description: error?.message || "Failed to add post. Try again later.",

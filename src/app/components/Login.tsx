@@ -38,6 +38,32 @@ const Login: React.FC = () => {
             return;
         }
 
+        const user = data.user;
+        if (!user) {
+            setError("Authentication failed.");
+            setLoading(false);
+            return;
+        }
+
+        const { data: existingProfile, error: profileError } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("id", user.id)
+            .single();
+
+        if (!existingProfile) {
+            const { error: insertError } = await supabase
+                .from("profiles")
+                .insert([{ id: user.id, username: user.user_metadata.username, email: user.email }]);
+
+            if (insertError) {
+                console.error("Profile insertion error:", insertError);
+                setError("Failed to insert profile.");
+                setLoading(false);
+                return;
+            }
+        }
+
         router.push("/dashboard/home");
     };
 

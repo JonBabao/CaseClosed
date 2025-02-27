@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Logo from '/public/logo_inverted.png';
 import BlackButton from '../styles/blackButton';
 import Link from 'next/link';
@@ -20,64 +20,49 @@ const Register: React.FC = () => {
         e.preventDefault();
         setError("");
         setSuccess("");
-
+    
         if (!username.trim()) {
             setError("Username is required.");
             return;
         }
-
+    
         if (password.length < 6) {
             setError("Password must be at least 6 characters long.");
             return;
         }
-
+    
         if (password !== confirmPassword) {
             setError("Passwords do not match.");
             return;
         }
-
+    
         setLoading(true);
-
+    
         const { data, error: signUpError } = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: { username }
-            }
+            options: { data: { username } }
         });
-
+    
+        console.log("Sign-up response:", data, signUpError); // Debugging
+    
         if (signUpError) {
             setError(signUpError.message);
             setLoading(false);
             return;
         }
-
-        const user = data.user;
-        if (user) {
-            const {
-                data: { user },
-                error: authError
-              } = await supabase.auth.getUser();
-              
-              if (authError || !user) {
-                console.error("Error fetching user:", authError);
-                return;
-              }
-              
-              const { error: profileError } = await supabase
-                .from("profiles")
-                .insert([{ id: user.id, username, email }]);
-              
-              if (profileError) {
-                console.error("Profile insert error:", profileError);
-              }
-              
     
-            setSuccess("Registration successful! Check your email for confirmation.");
+        if (data.user && !data.session) {
+            console.log("Email confirmation required before authentication.");
+            setSuccess("Check your email to confirm your account before logging in.");
+            setLoading(false);
+            return;
         }
     
+        setSuccess("Registration successful! Redirecting...");
         setLoading(false);
     };
+    
 
     return (
         <div className="flex flex-col bg-kinda-dark items-center justify-center w-full mt-10">

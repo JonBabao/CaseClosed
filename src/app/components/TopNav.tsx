@@ -7,8 +7,10 @@ import { FiPlus } from "react-icons/fi";
 import { createClient } from "../../../lib/supabase/client";
 import { User } from "@supabase/supabase-js"; 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const TopNav: React.FC = () => {
+    const router = useRouter();
     const supabase = createClient();
     const [isOpen, setIsOpen] = useState(false); 
     const [user, setUser] = useState<User | null>(null); 
@@ -35,9 +37,16 @@ const TopNav: React.FC = () => {
     };
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
-        setUser(null);
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error("Logout failed:", error.message);
+        } else {
+            setUser(null); // Clear user state
+            router.replace("/auth/login"); // Redirect to login page
+            window.location.reload(); // Ensure fresh auth state
+        }
     };
+    
 
     return (
         <div>
@@ -46,8 +55,8 @@ const TopNav: React.FC = () => {
                 <img src={Logo.src} alt="Logo" className="w-16 ml-8" />
                 <h1 className="righteous text-3xl ml-4">Case Closed</h1>
                 <div className="flex flex-grow items-center ml-16 font-semibold text-base gap-10">
-                    <button className="p-7 hover:bg-[#292929] transition-colors">Home</button>
-                    <button className="p-7 hover:bg-[#292929] transition-colors">Help</button>
+                    <a href="/dashboard/home" className="p-7 hover:bg-[#292929] transition-colors">Home</a>
+                    <a className="p-7 hover:bg-[#292929] transition-colors">Help</a>
                 </div>
 
                 <div className="flex gap-10 mr-10 font-semibold text-base">

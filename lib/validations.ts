@@ -8,9 +8,10 @@ export const postSchema = z.object({
     description: z.string().max(50, {
         message: "description must be at most 50 characters.",
       }),
-      body: z.string().min(10, {
-        message: "body must be at least 10 characters.",
-      }),
+    body: z.string().min(10, {
+      message: "body must be at least 10 characters.",
+    }),
+    createdBy: z.string(),
 
     id: z.string().optional()
   });

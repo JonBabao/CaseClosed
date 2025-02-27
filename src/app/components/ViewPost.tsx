@@ -11,6 +11,8 @@ const ViewPost: React.FC = () => {
     const supabase = createClient();
     const [liked, setLiked] = useState(false);
 
+    
+
     return(
         <div className="flex flex-col mt-32 px-8 lg:px-48 w-full text-gray-200">
             <h2 className="text-3xl righteous">Hello World</h2>
