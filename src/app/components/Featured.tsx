@@ -46,7 +46,7 @@ const Featured: React.FC = () => {
                         <button 
                             key={post.id} 
                             onClick={() => router.push(`/dashboard/viewPost/${post.id}`)} 
-                            className="cursor-pointer flex w-full py-4 md:p-6 border-t-2 border-gray-500 "
+                            className="cursor-pointer flex w-full py-4 md:px-4 border-t-2 border-gray-500"
                         >
                             <img
                             src={Logo.src}
@@ -69,7 +69,7 @@ const Featured: React.FC = () => {
                                     alt="Logo"
                                     className="w-8"
                                 />
-                                <div className="flex flex-col w-36 ml-4 justify-center">
+                                <div className="flex flex-col w-36 ml-4 items-start">
                                     <p>{post.createdBy}</p>
                                     <p>Created: {timeAgo(post.datePosted)}</p>
                                 </div>
