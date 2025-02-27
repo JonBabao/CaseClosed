@@ -23,6 +23,7 @@
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.0.4",
     "framer-motion": "^12.4.5",
+    "html-react-parser": "^5.2.2",
     "lexical": "^0.25.0",
     "lucide-react": "^0.475.0",
     "next": "15.1.7",

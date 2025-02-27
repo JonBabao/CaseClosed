@@ -3,8 +3,11 @@
 import React, { useEffect, useState } from "react";
 import Logo from "/public/logo.png"
 import { createClient } from "../../../lib/supabase/client";
-import { date } from "zod";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import { AiOutlineEye } from "react-icons/ai";
 import { timeAgo } from "../utils/timeAgo";
+import { shortenNumber } from "../utils/shortenNumber";
+import { useRouter } from "next/navigation";
 
 const Featured: React.FC = () => {
 
@@ -17,7 +20,9 @@ const Featured: React.FC = () => {
         views: BigInteger, 
         datePosted: string,
      }[]>([]);
+
     const supabase = createClient();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -38,21 +43,26 @@ const Featured: React.FC = () => {
             <div className="flex flex-wrap mt-4 w-full">
                 {posts.length > 0 ? (
                     posts.map((post) => (
-                        <div key={post.id} className="flex w-full py-4 md:p-6 border-t-2 border-gray-500 ">
+                        <button 
+                            key={post.id} 
+                            onClick={() => router.push(`/dashboard/viewPost/${post.id}`)} 
+                            className="cursor-pointer flex w-full py-4 md:p-6 border-t-2 border-gray-500 "
+                        >
                             <img
                             src={Logo.src}
                             alt="Logo"
                             className="w-16 hidden md:flex object-contain"
                             />
                             <div className="flex flex-grow flex-col pl-8 justify-center">
-                                <p className="font-bold text-base">{post.title}</p>
-                                <p>{post.description}</p>
-                                <p className="block md:hidden mt-4"><b>Likes:</b> {post.likes} <b>Views:</b> {post.views}</p>
+                                <p className="font-bold self-start text-base">{post.title}</p>
+                                <p className="self-start">{post.description}</p>
+                                <p className="flex md:hidden mt-4 gap-2 w-32"><AiOutlineHeart size={15} className="text-gray-200"/> {shortenNumber(Number(post.likes))} <AiOutlineEye size={15} className="text-gray-200" /> {shortenNumber(Number(post.views))}</p>
                             </div>
-                            <div className="hidden md:flex flex-col text-right justify-center">
-                                <p>Likes: {post.likes}</p>
-                                <p>Views: {post.views}</p>
+                            <div className="hidden md:flex flex-col text-right justify-center w-16">
+                                <p className="flex items-center gap-2 font-semibold"><AiOutlineHeart size={15} className="text-gray-200" /> {shortenNumber(Number(post.likes))}</p>
+                                <p className="flex items-center gap-2 font-semibold"><AiOutlineEye size={15} className="text-gray-200" /> {shortenNumber(Number(post.views))}</p>
                             </div>
+                            
                             <div className="hidden md:flex border-l-2 ml-4 p-4 items-center">
                                 <img
                                     src={Logo.src}
@@ -65,7 +75,7 @@ const Featured: React.FC = () => {
                                 </div>
 
                             </div>
-                        </div>
+                        </button>
                     ))
                     ) : (
                         <div className="w-full flex items-center justify-center">
