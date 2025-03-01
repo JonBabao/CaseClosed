@@ -53,9 +53,7 @@ const ViewPost: React.FC = () => {
         if (id) {
             fetchPost();
             fetchUser();
-            
         }
-
     }, [id]);
 
     useEffect(() => {
@@ -81,41 +79,47 @@ const ViewPost: React.FC = () => {
         incrementViews();
     }, [post]);
 
-    const checkIfLiked = async () => {
-        if (!userId || !post) return;
+    useEffect(() => {
+        const checkIfLiked = async () => {
+            if (!userId || !post) return;
 
-        const { data, error } = await supabase
-            .from("likes")
-            .select("id")
-            .eq("post_id", post.id)
-            .eq("user_id", userId)
-            .eq("isLiked", 1)
-            .single();
+            const { data, error } = await supabase
+                .from("likes")
+                .select("id")
+                .eq("post_id", post.id)
+                .eq("user_id", userId)
+                .eq("isLiked", 1)
+                .single();
 
-        if (error) {
-            if (error.code === "PGRST116") {
+            if (error) {
+                if (error.code === "PGRST116") {
+                    // No like found
+                    setLiked(false);
+                } else {
+                    console.error("Error checking like:", error);
+                }
             } else {
-                console.error("Error checking like:", error);
+                // Like found
+                setLiked(true);
             }
-        } else {
-            setLiked(!!data);
+        };
+
+        if (userId && post) {
+            checkIfLiked();
         }
-    };
+    }, [userId, post]);
 
     const handleLike = async () => {
         if (!post || !userId) return;
 
         if (liked) {
-            console.log("YES ITS WORKING");
-            console.log("Deleting like for post_id:", post.id, "and user_id:", userId);
             // Unlike
             const { error: deleteError } = await supabase
                 .from("likes")
-                .update({ isLiked: "FALSE" })
-                .eq('post_id', post.id)
-                .eq("user_id", "b11a8a6e-1d8d-4f8d-8663-2f09435efe14");
+                .update({ isLiked: 0 })
+                .eq("post_id", post.id)
+                .eq("user_id", userId);
 
-          
             if (deleteError) {
                 console.error("Error removing like:", deleteError);
                 return;
@@ -139,28 +143,30 @@ const ViewPost: React.FC = () => {
             // Like
             const { error: insertError } = await supabase
                 .from("likes")
-                .insert([{ post_id: post.id, user_id: userId, isLiked: 1 }]);
+                .update({ isLiked: 1 })
+                .eq("post_id", post.id)
+                .eq("user_id", userId);
 
             if (insertError) {
-                // Increment likes count in the posts table
-                const { error: updateError } = await supabase
-                    .from("posts")
-                    .update({ likes: post.likes + 1 })
-                    .eq("id", post.id);
+                console.error("Error adding like:", insertError);
+                return;
+            }
 
-                if (updateError) {
-                    console.error("Error updating post likes:", updateError);
-                    return;
-                }
+            // Increment likes count in the posts table
+            const { error: updateError } = await supabase
+                .from("posts")
+                .update({ likes: post.likes + 1 })
+                .eq("id", post.id);
+
+            if (updateError) {
+                console.error("Error updating post likes:", updateError);
+                return;
             }
 
             // Update local state
             setLiked(true);
             setPost((prevPost) => prevPost ? { ...prevPost, likes: prevPost.likes + 1 } : null);
         }
-
-        // Re-check if the post is liked after the operation
-        await checkIfLiked();
     };
 
     if (!post) {
