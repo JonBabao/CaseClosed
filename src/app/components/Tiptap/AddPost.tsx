@@ -96,8 +96,9 @@ export default function AddText() {
         title: "Post Added",
         description: "Your new post has been added successfully.",
       });
-  
+      
       form.reset();
+      router.push("/dashboard/home");
     } catch (error) {
       console.error("Error adding post:", JSON.stringify(error, null, 2)); 
       toast({

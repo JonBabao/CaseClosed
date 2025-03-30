@@ -88,7 +88,7 @@ const ViewPost: React.FC = () => {
                 .select("id")
                 .eq("post_id", post.id)
                 .eq("user_id", userId)
-                .eq("isLiked", 1)
+                .eq("isLiked", "TRUE")
                 .single();
 
             if (error) {
@@ -142,14 +142,20 @@ const ViewPost: React.FC = () => {
         } else {
             // Like
             const { error: insertError } = await supabase
+            .from("likes")
+            .upsert([{ post_id: post.id, user_id: userId, isLiked: 1 }]);
+
+            if (insertError) {
+                const { error } = await supabase
                 .from("likes")
                 .update({ isLiked: 1 })
                 .eq("post_id", post.id)
                 .eq("user_id", userId);
 
-            if (insertError) {
-                console.error("Error adding like:", insertError);
-                return;
+                if (error){
+                    console.error("Error inserting row:", error);
+                    return;
+                }
             }
 
             // Increment likes count in the posts table
